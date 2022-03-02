@@ -11,7 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_produto")
@@ -32,7 +35,9 @@ public class Produto implements Serializable {
 
 	private Set<Categoria> categorias = new HashSet<>(); // necessário já instanciar, garantir que a colecao nao comece
 															// nula, tem que ser vazia.
-
+	@OneToMany (mappedBy = "id.produto" )
+	private Set<PedidoItem> itens = new HashSet<>();
+	
 	public Produto() {
 
 	}
@@ -88,6 +93,16 @@ public class Produto implements Serializable {
 
 	public Set<Categoria> getCategorias() {
 		return categorias;
+	}
+	
+	@JsonIgnore
+	public Set <Pedido> getPedidos(){
+		Set<Pedido> set = new HashSet<>();
+		for (PedidoItem x: itens ) {
+			set.add(x.getPedido());
+		}
+		return set;
+		
 	}
 
 	@Override

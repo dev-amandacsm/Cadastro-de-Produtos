@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.projetweb.cadproduto.entities.Categoria;
+import com.projetweb.cadproduto.entities.Pagamento;
 import com.projetweb.cadproduto.entities.Pedido;
 import com.projetweb.cadproduto.entities.PedidoItem;
 import com.projetweb.cadproduto.entities.Produto;
@@ -77,5 +78,9 @@ public class TestConfig implements CommandLineRunner {
 		PedidoItem oi4 = new PedidoItem(p3, pr5, 2, pr5.getPreco());
 		
 		piR.saveAll(Arrays.asList(oi1,oi2,oi3,oi4));
+		
+		Pagamento pag1 = new Pagamento (null,Instant.parse("2019-06-20T21:53:07Z"),p1);
+		p1.setPagamento(pag1);
+		pR.save(p1);
 	}
 }
