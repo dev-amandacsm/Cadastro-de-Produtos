@@ -2,7 +2,9 @@ package com.projetweb.cadproduto.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.projetweb.cadproduto.entities.enums.PedidoStatus;
 
 @Entity
 public class Pedido implements Serializable{
@@ -19,21 +25,28 @@ public class Pedido implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@JsonFormat(shape=  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
 	private Instant momento;
 
+	private Integer pedidoStatus;
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
 	private Usuario cliente;// associacao que irá demonstrar que um cliente tem varios pedidos
 
+	@OneToMany (mappedBy = "id.pedido" )
+	private Set<PedidoItem> itens = new HashSet<>();
+	
 	public Pedido() {
 		
 	}
 
-	public Pedido(Long id, Instant momento, Usuario cliente) {
+	public Pedido(Long id, Instant momento, PedidoStatus pedidoStatus, Usuario cliente) {
 		super();
 		this.id = id;
 		this.momento = momento;
 		this.cliente = cliente;
+		setPedidoStatus(pedidoStatus);
 	}
 
 	public Long getId() {
@@ -59,7 +72,22 @@ public class Pedido implements Serializable{
 	public void setCliente(Usuario cliente) {
 		this.cliente = cliente;
 	}
+	
+	
 
+	public PedidoStatus getPedidoStatus() {
+		return PedidoStatus.valorde(pedidoStatus);
+	}
+
+	public void setPedidoStatus(PedidoStatus pedidoStatus) {
+		if (pedidoStatus != null) {
+		this.pedidoStatus = pedidoStatus.getCode();
+		}
+	}
+
+	public Set<PedidoItem> getItens(){
+		return itens;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
