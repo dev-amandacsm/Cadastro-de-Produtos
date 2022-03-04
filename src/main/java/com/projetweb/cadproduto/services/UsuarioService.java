@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.projetweb.cadproduto.entities.Usuario;
 import com.projetweb.cadproduto.repositories.UsuarioRepository;
+import com.projetweb.cadproduto.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UsuarioService {
@@ -21,7 +22,28 @@ public class UsuarioService {
 	
 	public Usuario findById(Long id) {
 		Optional<Usuario> obj= rep.findById(id);
-		return obj.get();
+		return obj.orElseThrow(()-> new ResourceNotFoundException(id));
 		
+	}
+	
+	public Usuario inserir(Usuario obj) {
+		return rep.save(obj);
+	}
+	
+	public void delete (Long id) {
+		rep.deleteById(id);
+	}
+	
+	public Usuario update(Long id, Usuario obj) {
+		
+		Usuario entity = rep.getById(id);
+		updateData(entity,obj);
+		return rep.save(entity);
+	}
+
+	private void updateData(Usuario entity, Usuario obj) {
+				entity.setNome(obj.getNome());
+				entity.setEmail(obj.getEmail());
+				entity.setTelefone(obj.getTelefone());
 	}
 }
