@@ -1,7 +1,11 @@
 package com.projetweb.cadproduto.resources;
 
 import java.net.URI;
+
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,51 +20,67 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.projetweb.cadproduto.entities.Usuario;
+import com.projetweb.cadproduto.repositories.UsuarioRepository;
+import com.projetweb.cadproduto.resources.dto.UsuarioDto;
+import com.projetweb.cadproduto.resources.dto.form.AtualizaUsuarioForm;
+import com.projetweb.cadproduto.resources.dto.form.Usuarioform;
 import com.projetweb.cadproduto.services.UsuarioService;
 
 @RestController
 @RequestMapping(value = "/usuario")
 public class UsuarioResource {
-	// Tem o intuito de disponibilizar um recurso web para a entidade user - rest controller
-	
+	// Tem o intuito de disponibilizar um recurso web para a entidade user - rest
+	// controller
+
 	@Autowired
 	private UsuarioService serv;
-	
+	@Autowired
+	private UsuarioRepository rep;
 	@GetMapping
-	public ResponseEntity<List<Usuario>> findAll(){
-		List<Usuario> l = serv.findAll();
-		return ResponseEntity.ok().body(l);
-	}
-	
-	@GetMapping (value="/{id}")
-	public ResponseEntity<Usuario> findById(@PathVariable Long id){
-		Usuario obj = serv.findById(id);
-		return ResponseEntity.ok().body(obj);
-	}
-	
-	@PostMapping
-	public ResponseEntity<Usuario> inserir(@RequestBody Usuario obj){
-		obj = serv.inserir(obj);
-		URI uri =ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(obj.getId()).toUri();
-		return ResponseEntity.created(uri).body(obj);	
+	public ResponseEntity<List<UsuarioDto>> findAll() {
+		List<Usuario> usuarios = serv.findAll();
+		List<UsuarioDto> dto = UsuarioDto.convert(usuarios);
+		return ResponseEntity.ok().body(dto);
 	}
 
-	
-	@DeleteMapping  (value="/{id}")
-	public ResponseEntity<Void> delete(@PathVariable Long id){
-	
+	@GetMapping(value = "/{id}")
+	@Transactional
+	public ResponseEntity<UsuarioDto> findById(@PathVariable Long id) {
+		UsuarioDto obj = serv.findById(id);
+		return ResponseEntity.ok().body(obj);
+	}
+
+	@PostMapping
+	@Transactional
+	public ResponseEntity<Usuarioform> inserir(@RequestBody Usuarioform form) {
+		Usuario usuario = form.converter();
+		serv.inserir(usuario);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(usuario.getId())
+				.toUri();
+
+		return ResponseEntity.created(uri).body(new Usuarioform(usuario));
+	}
+
+	@DeleteMapping(value = "/{id}")
+	@Transactional
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+
 		serv.delete(id);
 		return ResponseEntity.noContent().build();
-}
-	
-	@PutMapping (value="/{id}")
-	public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody Usuario obj){
+	}
+
+	@PutMapping(value = "/{id}")
+	@Transactional
+	public ResponseEntity<UsuarioDto> update(@PathVariable Long id, @RequestBody AtualizaUsuarioForm form) {
 		
-		obj= serv.update(id, obj);
+		Optional<Usuario> optional = rep.findById(id);
 		
-		return ResponseEntity.ok().body(obj);
-		
+		if(optional.isPresent()) {
+			Usuario usuario = form.atualiza(id, rep);
+			return ResponseEntity.ok(new UsuarioDto(usuario));
+		}
+		return ResponseEntity.notFound().build();
+
 	}
 
 }

@@ -32,7 +32,6 @@ public class Produto implements Serializable {
 
 	@ManyToMany
 	@JoinTable(name = "tb_produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-
 	private Set<Categoria> categorias = new HashSet<>(); // necessário já instanciar, garantir que a colecao nao comece
 															// nula, tem que ser vazia.
 	@OneToMany (mappedBy = "id.produto" )

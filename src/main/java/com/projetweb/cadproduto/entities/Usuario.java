@@ -44,6 +44,8 @@ public class Usuario implements Serializable{
 		this.telefone = telefone;
 		this.senha = senha;
 	}
+	
+
 
 	public Long getId() {
 		return id;

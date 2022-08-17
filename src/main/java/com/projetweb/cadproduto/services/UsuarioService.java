@@ -1,7 +1,6 @@
 package com.projetweb.cadproduto.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.projetweb.cadproduto.entities.Usuario;
 import com.projetweb.cadproduto.repositories.UsuarioRepository;
+import com.projetweb.cadproduto.resources.dto.UsuarioDto;
 import com.projetweb.cadproduto.services.exceptions.DatabaseException;
 import com.projetweb.cadproduto.services.exceptions.ResourceNotFoundException;
 
@@ -23,13 +23,15 @@ public class UsuarioService {
 		return rep.findAll();
 	}
 	
-	public Usuario findById(Long id) {
-		Optional<Usuario> obj= rep.findById(id);
-		return obj.orElseThrow(()-> new ResourceNotFoundException(id));
+	public UsuarioDto findById(Long id) {
+		Usuario obj= rep.findById(id).get();
+		UsuarioDto dto = new UsuarioDto(obj);
+		return dto;
 		
 	}
 	
 	public Usuario inserir(Usuario obj) {
+		
 		return rep.save(obj);
 	}
 	
@@ -44,16 +46,14 @@ public class UsuarioService {
 		
 	}
 	
-	public Usuario update(Long id, Usuario obj) {
-		
-		Usuario entity = rep.getById(id);
-		updateData(entity,obj);
-		return rep.save(entity);
+//	public  UsuarioDto  update(Long id, AtualizaUsuarioForm form) {
+//		Usuario usuario = rep.getById(id);
+//		UsuarioDto dto = new UsuarioDto(usuario);
+//		
+//		form.atualiza(dto.getId(), rep);
+//		return form;
+//		
 	}
 
-	private void updateData(Usuario entity, Usuario obj) {
-				entity.setNome(obj.getNome());
-				entity.setEmail(obj.getEmail());
-				entity.setTelefone(obj.getTelefone());
-	}
-}
+
+
