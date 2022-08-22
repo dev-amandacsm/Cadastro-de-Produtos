@@ -1,13 +1,13 @@
 package com.projetweb.cadproduto.services;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.projetweb.cadproduto.entities.Categoria;
 import com.projetweb.cadproduto.repositories.CategoriaRepository;
+import com.projetweb.cadproduto.resources.dto.CategoriaDto;
 
 @Service
 public class CategoriaService {
@@ -15,13 +15,12 @@ public class CategoriaService {
 	@Autowired
 	private CategoriaRepository rep;
 	
-	public List<Categoria> findAll(){
-		return rep.findAll();
+	public List<CategoriaDto> findAll(){
+		return rep.findAll().stream().map(CategoriaDto::new).collect(Collectors.toList());
 	}
 	
-	public Categoria findById(Long id) {
-		Optional<Categoria> obj= rep.findById(id);
-		return obj.get();
+	public CategoriaDto findById(Long id) {
+		return new CategoriaDto(rep.findById(id).get());
 		
 	}
 }

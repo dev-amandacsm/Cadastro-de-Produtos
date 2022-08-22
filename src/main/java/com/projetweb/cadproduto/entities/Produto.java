@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,16 +32,17 @@ public class Produto implements Serializable {
 	private Double preco;
 	private String imgUrl;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "tb_produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-	private Set<Categoria> categorias = new HashSet<>(); // necessário já instanciar, garantir que a colecao nao comece
-															// nula, tem que ser vazia.
+	private Set<Categoria> categorias = new HashSet<>(); 
+															
 	@OneToMany (mappedBy = "id.produto" )
 	private Set<PedidoItem> itens = new HashSet<>();
 	
 	public Produto() {
 
 	}
+
 
 	public Produto(Long id, String nome, String descricao, Double preco, String imgUrl) {
 		super();
@@ -48,7 +51,9 @@ public class Produto implements Serializable {
 		this.descricao = descricao;
 		this.preco = preco;
 		this.imgUrl = imgUrl;
+		
 	}
+
 
 	public Long getId() {
 		return id;
@@ -128,5 +133,7 @@ public class Produto implements Serializable {
 			return false;
 		return true;
 	}
+
+	
 
 }

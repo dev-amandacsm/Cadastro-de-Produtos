@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projetweb.cadproduto.entities.Categoria;
+import com.projetweb.cadproduto.resources.dto.CategoriaDto;
 import com.projetweb.cadproduto.services.CategoriaService;
 
 @RestController
@@ -20,14 +21,14 @@ public class CategoriaResource {
 	private CategoriaService serv;
 	
 	@GetMapping
-	public ResponseEntity<List<Categoria>> findAll(){
-		List<Categoria> l = serv.findAll();
+	public ResponseEntity<List<CategoriaDto>> findAll(){
+		List<CategoriaDto> l = serv.findAll();
 		return ResponseEntity.ok().body(l);
 	}
 	
 	@GetMapping (value="/{id}")
-	public ResponseEntity<Categoria> findById(@PathVariable Long id){
-		Categoria obj = serv.findById(id);
+	public ResponseEntity<CategoriaDto> findById(@PathVariable Long id){
+		CategoriaDto obj = serv.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 }

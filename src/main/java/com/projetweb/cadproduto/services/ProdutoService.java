@@ -1,14 +1,19 @@
 package com.projetweb.cadproduto.services;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.projetweb.cadproduto.entities.Categoria;
 import com.projetweb.cadproduto.entities.Produto;
 import com.projetweb.cadproduto.repositories.ProdutoRepository;
+import com.projetweb.cadproduto.resources.dto.CategoriaDto;
+import com.projetweb.cadproduto.resources.dto.ProdutoDetalheDto;
 import com.projetweb.cadproduto.resources.dto.ProdutoDto;
 import com.projetweb.cadproduto.services.exceptions.DatabaseException;
 import com.projetweb.cadproduto.services.exceptions.ResourceNotFoundException;
@@ -18,21 +23,25 @@ public class ProdutoService {
 
 	@Autowired
 	private ProdutoRepository rep;
+	@Autowired
+	private CategoriaService categoriaService;
 	
-	public List<Produto> findAll(){
-		return rep.findAll();
+	public List<ProdutoDetalheDto> findAll(){
+		
+		return rep.findAll().stream().map(ProdutoDetalheDto::new).collect(Collectors.toList());
 	}
 	
 	public ProdutoDto findById(Long id) {
-		Produto obj= rep.findById(id).get();
-		ProdutoDto dto = new ProdutoDto(obj);
-		return dto;
+		
+		return new ProdutoDto(rep.findById(id).get());
 		
 	}
 	
-public Produto inserir(Produto obj) {
+public ProdutoDto inserir(ProdutoDto form) {
 		
-		return rep.save(obj);
+		Produto produto = new Produto (null,form.getNome(),form.getDescricao(), form.getPreco(),form.getImgUrl());
+		
+		return new ProdutoDto(rep.save(produto)); 
 	}
 
 public void delete (Long id) {
@@ -46,7 +55,16 @@ public void delete (Long id) {
 	
 }
 
-// public metodo update(){}
+public ProdutoDto atualizar(Long id, ProdutoDto form) {
+    Produto produto = rep.findById(id).get();
+  
+    produto.setNome(form.getNome());
+    produto.setDescricao(form.getDescricao());
+    produto.setPreco(form.getPreco());
+    produto.setImgUrl(form.getImgUrl());
+
+    return new ProdutoDto(produto);
+}
 
 }
 

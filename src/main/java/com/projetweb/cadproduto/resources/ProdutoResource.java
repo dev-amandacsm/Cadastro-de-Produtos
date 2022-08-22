@@ -2,7 +2,6 @@ package com.projetweb.cadproduto.resources;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -17,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import com.projetweb.cadproduto.entities.Produto;
-import com.projetweb.cadproduto.repositories.ProdutoRepository;
+import com.projetweb.cadproduto.resources.dto.ProdutoDetalheDto;
 import com.projetweb.cadproduto.resources.dto.ProdutoDto;
-import com.projetweb.cadproduto.resources.dto.form.ProdutoForm;
 import com.projetweb.cadproduto.services.ProdutoService;
 
 @RestController
@@ -30,33 +28,28 @@ public class ProdutoResource {
 
 	@Autowired
 	private ProdutoService serv;
-	@Autowired
-	private ProdutoRepository rep;
-
+	
 	@GetMapping
 	@Transactional
-	public ResponseEntity<List<ProdutoDto>> findAll() {
-		List<Produto> produtos = serv.findAll();
-		List<ProdutoDto> dto = ProdutoDto.convert(produtos);
-		return ResponseEntity.ok().body(dto);
+	public ResponseEntity<List<ProdutoDetalheDto>> findAll() {
+		
+		return ResponseEntity.ok().body(serv.findAll());
 	}
 
 	@GetMapping(value = "/{id}")
 	@Transactional
 	public ResponseEntity<ProdutoDto> findById(@PathVariable Long id) {
-		ProdutoDto obj = serv.findById(id);
-		return ResponseEntity.ok().body(obj);
+		return ResponseEntity.ok(serv.findById(id));
 	}
 
 	@PostMapping
 	@Transactional
-	public ResponseEntity<ProdutoForm> inserir(@RequestBody ProdutoForm form) {
-		Produto produto = form.converter();
-		serv.inserir(produto);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(produto.getId())
-				.toUri();
+	public ResponseEntity<ProdutoDto> inserir(@RequestBody ProdutoDto form, UriComponentsBuilder uriBuilder) {
 
-		return ResponseEntity.created(uri).body(new ProdutoForm(produto));
+		ProdutoDto dto = serv.inserir(form);
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
+
+		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@DeleteMapping(value = "/{id}")
@@ -69,15 +62,10 @@ public class ProdutoResource {
 
 	@PutMapping(value = "/{id}")
 	@Transactional
-	public ResponseEntity<ProdutoDto> update(@PathVariable Long id, @RequestBody ProdutoForm form) {
+	public ResponseEntity<ProdutoDto> update(@PathVariable Long id, @RequestBody ProdutoDto form) {
 
-		Optional<Produto> prod = rep.findById(id);
-
-		if (prod.isPresent()) {
-			Produto produto = form.atualiza(id, rep);
-			return ResponseEntity.ok(new ProdutoDto(produto));
-		}
-		return ResponseEntity.notFound().build();
+		ProdutoDto dto = serv.atualizar(id, form);
+		return ResponseEntity.ok(dto);
 
 	}
 }

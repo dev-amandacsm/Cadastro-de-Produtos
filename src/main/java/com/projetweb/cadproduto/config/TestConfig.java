@@ -65,7 +65,6 @@ public class TestConfig implements CommandLineRunner {
 		
 		pr1.getCategorias().add(cat2);
 		pr2.getCategorias().add(cat1);
-		pr2.getCategorias().add(cat3);
 		pr3.getCategorias().add(cat3);
 		pr4.getCategorias().add(cat3);
 		pr5.getCategorias().add(cat2);
