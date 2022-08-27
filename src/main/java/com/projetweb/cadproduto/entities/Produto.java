@@ -44,14 +44,14 @@ public class Produto implements Serializable {
 	}
 
 
-	public Produto(Long id, String nome, String descricao, Double preco, String imgUrl) {
+	public Produto(Long id, String nome, String descricao, Double preco, String imgUrl, Set<Categoria> categorias) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.preco = preco;
 		this.imgUrl = imgUrl;
-		
+		this.categorias = categorias;
 	}
 
 
