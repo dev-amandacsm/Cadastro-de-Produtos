@@ -62,6 +62,7 @@ public ProdutoDto atualizar(Long id, ProdutoDto form) {
     produto.setDescricao(form.getDescricao());
     produto.setPreco(form.getPreco());
     produto.setImgUrl(form.getImgUrl());
+	produto.setCategorias(form.getCategorias());
 
     return new ProdutoDto(produto);
 }

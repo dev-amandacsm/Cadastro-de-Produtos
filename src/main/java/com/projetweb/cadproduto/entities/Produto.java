@@ -95,6 +95,10 @@ public class Produto implements Serializable {
 		this.imgUrl = imgUrl;
 	}
 
+	public void setCategorias(Set<Categoria> categorias){
+		this.categorias = categorias;
+	}
+
 	public Set<Categoria> getCategorias() {
 		return categorias;
 	}
