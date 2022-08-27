@@ -39,7 +39,7 @@ public class ProdutoService {
 	
 public ProdutoDto inserir(ProdutoDto form) {
 		
-		Produto produto = new Produto (null,form.getNome(),form.getDescricao(), form.getPreco(),form.getImgUrl());
+		Produto produto = new Produto (null,form.getNome(),form.getDescricao(), form.getPreco(),form.getImgUrl(), form.getCategorias());
 		
 		return new ProdutoDto(rep.save(produto)); 
 	}
